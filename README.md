@@ -24,21 +24,21 @@ New-Item -Path '.\docker\Dockerfile' -ItemType File -Force
 with content
 ```
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
-WORKDIR /app
+WORKDIR /source
 
 # copy sln and csproj and restore as distinct layers
-COPY ./*.sln .
-COPY ./**/*.csproj ./
+COPY ./DockerExample.sln ./
+COPY ./WebAPI/WebAPI.csproj ./WebAPI/
 RUN dotnet restore
 
 # copy everything else and build app
 COPY . .
 WORKDIR /app/WebAPI
-RUN dotnet publish -c release -o published
+RUN dotnet publish -c release -o /source/bin
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS runtime
 WORKDIR /app
-COPY --from=build /app/WebAPI/published ./
+COPY --from=build /source/bin ./
 
 EXPOSE 5000
 ENTRYPOINT ["dotnet", "WebAPI.dll"]
@@ -223,7 +223,7 @@ public class Program
             });
 }
 ```
-3.7 Build new docker image and attach volume to store container logs on host machine.
+3.7 Build new docker image and attach volume to store container logs on host machine (in folder E:\docker\logs).
 ```
-docker run -it --rm -v E:\docker\logs:/app/logs -p 5000:5000 --name webapi0.1.0 webapi-example:0.1.0
+docker run -it --rm -v E:\docker\logs:/app/log -p 5000:5000 --name webapi0.1.0 webapi-example:0.1.0
 ```

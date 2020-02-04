@@ -14,8 +14,7 @@ namespace WebAPI
         {
             var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
             try
-            {
-
+            { 
                 logger.Info("Starting up application ...");
                 CreateHostBuilder(args).Build().Run();
             }
