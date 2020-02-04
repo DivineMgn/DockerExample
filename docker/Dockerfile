@@ -10,11 +10,11 @@ RUN dotnet restore
 # copy everything else and build app
 COPY . .
 WORKDIR /source/WebAPI
-RUN dotnet publish -c release -o /bin
+RUN dotnet publish -c release -o /source/bin
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS runtime
 WORKDIR /app
-COPY --from=build /bin ./
+COPY --from=build /source/bin ./
 
 EXPOSE 5000
 ENTRYPOINT ["dotnet", "WebAPI.dll"]
