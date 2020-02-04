@@ -9,7 +9,7 @@ namespace WebAPI.Controllers
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
-    { 
+    {
         private readonly ILogger<WeatherForecastController> _logger;
         private readonly IWeatherForecaster _weatherForecaster;
 
@@ -25,7 +25,16 @@ namespace WebAPI.Controllers
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
-            return _weatherForecaster.PredictWeather();
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            try
+            {
+                return _weatherForecaster.PredictWeather();
+            }
+            finally
+            {
+                sw.Stop();
+                _logger.LogInformation($"Get weather forecast executed in {sw.Elapsed.TotalMilliseconds} ms.");
+            }
         }
     }
 }
